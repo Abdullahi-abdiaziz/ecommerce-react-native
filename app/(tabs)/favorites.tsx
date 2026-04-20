@@ -1,10 +1,10 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-export default function Index() {
+export default function Favorites() {
   return (
     <View className="flex-1 items-center justify-center">
-      <Text className="text-3xl font-bold text-green-500">Hello World</Text>
+      <Text>Favorites</Text>
     </View>
   );
 }
