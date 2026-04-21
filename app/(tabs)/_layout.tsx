@@ -1,21 +1,80 @@
 import { COLORS } from "@/constants";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
+import { Image, Platform, TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabsLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: "#CDCDE0",
+        headerShown: true,
+        headerLeft: () => (
+          <Image
+            source={require("@/assets/logo.png")}
+            style={{ width: 90, height: 35, marginLeft: 16 }}
+            resizeMode="contain"
+          />
+        ),
+        headerRight: () => (
+          <TouchableOpacity
+            style={{
+              marginRight: 16,
+              flexDirection: "row",
+              gap: 8,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name="search-outline"
+              size={20}
+              color={COLORS.primary}
+              style={{
+                borderRadius: 50,
+                padding: 4,
+                backgroundColor: COLORS.surface,
+              }}
+            />
+            <Ionicons
+              name="settings-outline"
+              size={20}
+              color={COLORS.primary}
+              style={{
+                borderRadius: 50,
+                padding: 4,
+                backgroundColor: COLORS.surface,
+              }}
+            />
+          </TouchableOpacity>
+        ),
+        headerTitle: "",
+        headerStyle: {
+          backgroundColor: "#FFFFFF",
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 1,
+          borderBottomColor: "#F2F2F2",
+        },
+        tabBarActiveTintColor: COLORS.accent,
+        tabBarInactiveTintColor: "#9BA1A6",
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: "500",
+        },
         tabBarStyle: {
-          backgroundColor: "#fff",
+          backgroundColor: "#FFFFFF",
           borderTopWidth: 1,
-          borderTopColor: "#F0F0F0",
-          height: 56,
+          borderTopColor: "#F2F2F2",
+          height: Platform.OS === "ios" ? 88 : 60 + insets.bottom,
           paddingTop: 8,
+          paddingBottom:
+            Platform.OS === "ios" ? 28 : Math.max(insets.bottom, 12),
+          elevation: 0,
         },
       }}
     >
@@ -23,16 +82,10 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({
-            color,
-            focused,
-          }: {
-            color: string;
-            focused: boolean;
-          }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "home" : "home-outline"}
-              size={26}
+              size={24}
               color={color}
             />
           ),
@@ -42,16 +95,10 @@ export default function TabsLayout() {
         name="cart"
         options={{
           title: "Cart",
-          tabBarIcon: ({
-            color,
-            focused,
-          }: {
-            color: string;
-            focused: boolean;
-          }) => (
-            <Feather
-              name={focused ? "shopping-cart" : "shopping-cart"}
-              size={26}
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "cart" : "cart-outline"}
+              size={24}
               color={color}
             />
           ),
@@ -61,16 +108,10 @@ export default function TabsLayout() {
         name="favorites"
         options={{
           title: "Favorites",
-          tabBarIcon: ({
-            color,
-            focused,
-          }: {
-            color: string;
-            focused: boolean;
-          }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "heart" : "heart-outline"}
-              size={26}
+              size={24}
               color={color}
             />
           ),
@@ -80,16 +121,10 @@ export default function TabsLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({
-            color,
-            focused,
-          }: {
-            color: string;
-            focused: boolean;
-          }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "person" : "person-outline"}
-              size={26}
+              size={24}
               color={color}
             />
           ),

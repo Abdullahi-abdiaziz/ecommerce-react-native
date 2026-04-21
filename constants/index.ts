@@ -1,12 +1,21 @@
 export const COLORS = {
-    primary: "#111111",
-    secondary: "#666666",
-    background: "#FFFFFF",
-    surface: "#F7F7F7",
-    accent: "#FF4C3B",
-    border: "#EEEEEE",
-    error: "#FF4444",
+    // Brand Colors
+    primary: "#0F172A",    // Deep Slate (Headings, primary text)
+    secondary: "#64748B",  // Slate 500 (Secondary text, icons)
+    accent: "#4F46E5",     // Indigo 600 (Actions, active states)
+    
+    // Background & Surfaces
+    background: "#FFFFFF", // Clean white
+    surface: "#F8FAFC",    // Slate 50 (Cards, inputs)
+    
+    // UI Elements
+    border: "#E2E8F0",     // Slate 200 (Dividers, borders)
+    error: "#EF4444",      // Red 500
+    success: "#10B981",    // Emerald 500
+    warning: "#F59E0B",    // Amber 500
+    info: "#3B82F6",       // Blue 500
 };
+
 
 export const CATEGORIES = [
     { id: 1, name: "Men", icon: "man-outline" },
