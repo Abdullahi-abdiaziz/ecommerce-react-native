@@ -11,55 +11,7 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: true,
-        headerLeft: () => (
-          <Image
-            source={require("@/assets/logo.png")}
-            style={{ width: 90, height: 35, marginLeft: 16 }}
-            resizeMode="contain"
-          />
-        ),
-        headerRight: () => (
-          <TouchableOpacity
-            style={{
-              marginRight: 16,
-              flexDirection: "row",
-              gap: 8,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            activeOpacity={0.7}
-          >
-            <Ionicons
-              name="search-outline"
-              size={20}
-              color={COLORS.primary}
-              style={{
-                borderRadius: 50,
-                padding: 4,
-                backgroundColor: COLORS.surface,
-              }}
-            />
-            <Ionicons
-              name="settings-outline"
-              size={20}
-              color={COLORS.primary}
-              style={{
-                borderRadius: 50,
-                padding: 4,
-                backgroundColor: COLORS.surface,
-              }}
-            />
-          </TouchableOpacity>
-        ),
-        headerTitle: "",
-        headerStyle: {
-          backgroundColor: "#FFFFFF",
-          elevation: 0,
-          shadowOpacity: 0,
-          borderBottomWidth: 1,
-          borderBottomColor: "#F2F2F2",
-        },
+        headerShown: false,
         tabBarActiveTintColor: COLORS.accent,
         tabBarInactiveTintColor: "#9BA1A6",
         tabBarLabelStyle: {
