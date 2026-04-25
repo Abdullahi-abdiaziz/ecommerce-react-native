@@ -1,12 +1,20 @@
-import { ScrollView, View, Image, Text, TouchableOpacity } from "react-native";
+import {
+  ScrollView,
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "@/components/Header";
-import { BANNERS } from "@/assets/assets";
+import { BANNERS, dummyProducts } from "@/assets/assets";
 import { Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { CATEGORIES, COLORS } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
+import { Product } from "@/constants/types";
 
 const { width } = Dimensions.get("window");
 
@@ -21,6 +29,7 @@ export default function Home() {
       >
         <BannerSection />
         <CategorySection />
+        <ProductShowcaseSection />
         {/* <FeaturedProductsSection /> */}
         {/* <FlashSaleSection /> */}
       </ScrollView>
@@ -99,13 +108,14 @@ const CategorySection = () => {
   return (
     <View className="mt-6">
       <View className="flex flex-col">
-        <Text className="text-lg font-extrabold text-primary mb-3 uppercase leading-none tracking-tighter">
+        {/* <Text className="text-lg font-extrabold text-primary mb-3 uppercase leading-none tracking-tighter">
           Categories
-        </Text>
+        </Text> */}
+        <HeadingTitle title="Categories" />
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          className=""
+          className="mt-3"
         >
           {categories.map((category: any) => (
             <TouchableOpacity
@@ -144,5 +154,152 @@ const CategorySection = () => {
         </ScrollView>
       </View>
     </View>
+  );
+};
+
+const ProductShowcaseSection = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProducts = async () => {
+    setProducts(dummyProducts);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  return (
+    <View className="mt-6">
+      <View className="flex flex-row items-center justify-between mb-3">
+        {/* <Text className="text-lg font-extrabold text-primary uppercase leading-none tracking-tighter">
+          Popular
+        </Text> */}
+        <HeadingTitle title="Popular" />
+        <TouchableOpacity onPress={() => {}}>
+          <Text className="text-sm font-bold  text-secondary">See All</Text>
+        </TouchableOpacity>
+      </View>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color={COLORS.primary}
+          className="mt-10"
+        />
+      ) : (
+        <View className="flex flex-row flex-wrap justify-between gap-y-4">
+          {products.slice(0, 6).map((product, index) => (
+            <ProductCard key={index} product={product} />
+          ))}
+        </View>
+      )}
+    </View>
+  );
+};
+
+const HeadingTitle = ({ title }: { title: string }) => {
+  return (
+    <View className="flex flex-row items-center justify-start gap-2 rounded-md overflow-hidden">
+      <View className="w-2 h-5 bg-accent"></View>
+      <Text className="text-lg font-extrabold text-primary uppercase leading-none tracking-tighter">
+        {title}
+      </Text>
+    </View>
+  );
+};
+
+const ProductCard = ({ product }: { product: Product }) => {
+  const router = useRouter();
+  const isSale = product.comparePrice && product.comparePrice > product.price;
+
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        // router.push(`/(tabs)/products/${product._id}`);
+      }}
+      activeOpacity={0.8}
+      className="bg-white rounded-[10px] border border-gray-100 overflow-hidden"
+      style={{
+        width: (width - 48) / 2,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 2,
+      }}
+    >
+      <View className="relative">
+        <Image
+          source={{ uri: product.images[0] }}
+          className="w-full aspect-[4/5]"
+          resizeMode="cover"
+        />
+
+        {/* Action Buttons Overlay */}
+        <View className="absolute top-3 right-3 gap-2">
+          <TouchableOpacity
+            className="bg-white/90 p-2 rounded-full shadow-sm"
+            style={{ backdropFilter: "blur(10px)" }}
+          >
+            <Ionicons name="heart-outline" size={18} color={COLORS.primary} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Badges */}
+        {isSale && (
+          <View className="absolute top-3 left-3 bg-error px-2.5 py-1 rounded-full">
+            <Text className="text-white text-[10px] font-black uppercase">
+              Sale
+            </Text>
+          </View>
+        )}
+
+        {/* Rating Floating Badge */}
+        <View className="absolute bottom-3 left-3 bg-white/90 px-2.5 py-1 rounded-xl flex-row items-center gap-1 shadow-sm">
+          <Ionicons name="star" size={12} color="#FFD700" />
+          <Text className="text-primary text-[11px] font-bold">
+            {product.ratings.average}
+          </Text>
+        </View>
+      </View>
+
+      <View className="p-4 pt-3">
+        <Text className="text-secondary text-[10px] font-bold uppercase tracking-[1px] mb-1">
+          {typeof product.category === "string"
+            ? product.category
+            : product.category.name}
+        </Text>
+        <Text
+          className="text-primary font-bold text-[15px] leading-tight h-10"
+          numberOfLines={2}
+        >
+          {product.name}
+        </Text>
+
+        <View className="flex-row items-center justify-between mt-1">
+          <View>
+            <Text className="text-accent font-black text-lg">
+              ${product.price}
+            </Text>
+            {isSale && (
+              <Text className="text-secondary text-[10px] line-through font-medium">
+                ${product.comparePrice}
+              </Text>
+            )}
+          </View>
+
+          <TouchableOpacity
+            className="bg-primary w-8 h-8 rounded-lg flex items-center justify-center"
+            onPress={(e) => {
+              e.stopPropagation();
+              // Add to cart logic
+            }}
+          >
+            <Ionicons name="add" size={15} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 };
