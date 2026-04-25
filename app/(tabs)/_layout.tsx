@@ -17,6 +17,7 @@ export default function TabsLayout() {
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: "500",
+          marginBottom: Platform.OS === "ios" ? 0 : 2,
         },
         tabBarStyle: {
           backgroundColor: "#FFFFFF",
