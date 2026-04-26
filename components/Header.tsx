@@ -42,7 +42,7 @@ const Header = ({
 
   return (
     <View
-      style={[{ paddingTop: insets.top }, headerBgStyle, shadowStyle]}
+      style={[{ paddingTop: insets.top + 5 }, headerBgStyle, shadowStyle]}
       className={`flex-row items-center justify-between px-4 pb-3 ${borderClass}`}
     >
       {/* LEFT SECTION */}
@@ -74,7 +74,7 @@ const Header = ({
         ) : (
           title && (
             <Text
-              className={`text-lg font-bold ${isScrolled || !transparent ? "text-primary" : "text-white"} tracking-tight`}
+              className={`text-lg font-bold ${isScrolled || !transparent ? "text-primary" : "text-primary"} tracking-tight`}
               numberOfLines={1}
             >
               {title}

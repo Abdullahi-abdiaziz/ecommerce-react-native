@@ -55,6 +55,7 @@ export default function Home() {
           showLogo
           isScrolled={isScrolled}
           transparent
+          showSearch
         />
       </View>
 
@@ -322,7 +323,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
         {/* Rating Floating Badge */}
         <View
-          className="absolute bottom-3 left-3 px-2.5 py-1.5 rounded-xl flex-row items-center gap-1 border border-slate-50"
+          className="absolute bottom-3 left-3 px-2.5 py-1.5 rounded-lg flex-row items-center gap-1 border border-slate-50"
           style={{
             backgroundColor: "rgba(255, 255, 255, 0.95)",
             shadowColor: "#000",
@@ -339,20 +340,20 @@ const ProductCard = ({ product }: { product: Product }) => {
         </View>
       </View>
 
-      <View className="p-4 pt-3">
+      <View className="p-2">
         <Text className="text-secondary text-[10px] font-bold uppercase tracking-[1px] mb-1">
           {typeof product.category === "string"
             ? product.category
             : product.category.name}
         </Text>
         <Text
-          className="text-primary font-bold text-[15px] leading-tight h-10"
-          numberOfLines={2}
+          className="text-primary font-bold text-[15px] leading-tight h-8"
+          numberOfLines={1}
         >
           {product.name}
         </Text>
 
-        <View className="flex-row items-center justify-between mt-1">
+        <View className="flex-row items-center justify-between">
           <View>
             <Text className="text-accent font-black text-lg">
               ${product.price}
