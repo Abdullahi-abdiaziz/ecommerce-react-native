@@ -227,7 +227,11 @@ const ProductShowcaseSection = () => {
           Popular
         </Text> */}
         <HeadingTitle title="Popular" />
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity
+          onPress={() => {
+            router.push("/products");
+          }}
+        >
           <Text className="text-sm font-bold  text-secondary">See All</Text>
         </TouchableOpacity>
       </View>
@@ -265,7 +269,7 @@ const ProductCard = ({ product }: { product: Product }) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        // router.push(`/(tabs)/products/${product._id}`);
+        router.push(`/products/${product._id}`);
       }}
       activeOpacity={0.8}
       className="bg-white rounded-[10px] border border-gray-100 overflow-hidden"
