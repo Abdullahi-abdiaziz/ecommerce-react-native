@@ -22,11 +22,7 @@ export default function Home() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Header showMenu showCart showLogo />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        className="flex-1 px-4"
-      >
+      <ScrollView showsVerticalScrollIndicator={false} className="flex-1 px-4">
         <BannerSection />
         <CategorySection />
         <ProductShowcaseSection />
