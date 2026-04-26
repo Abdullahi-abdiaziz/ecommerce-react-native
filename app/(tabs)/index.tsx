@@ -5,13 +5,18 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useEffect, useState } from "react";
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  runOnJS,
+} from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import { BANNERS, dummyProducts } from "@/assets/assets";
-import { Dimensions } from "react-native";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import { CATEGORIES, COLORS } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { Product } from "@/constants/types";
@@ -19,22 +24,61 @@ import { Product } from "@/constants/types";
 const { width } = Dimensions.get("window");
 
 export default function Home() {
+  const scrollY = useSharedValue(0);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const insets = useSafeAreaInsets();
+
+  const handleScrollState = (offset: number) => {
+    if (offset > 20 && !isScrolled) {
+      setIsScrolled(true);
+    } else if (offset <= 20 && isScrolled) {
+      setIsScrolled(false);
+    }
+  };
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+      runOnJS(handleScrollState)(event.contentOffset.y);
+    },
+  });
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <Header showMenu showCart showLogo />
-      <ScrollView showsVerticalScrollIndicator={false} className="flex-1 px-4">
+    <View className="flex-1 bg-white">
+      {/* Floating Header */}
+      <View
+        style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 50 }}
+      >
+        <Header
+          showMenu
+          showCart
+          showLogo
+          isScrolled={isScrolled}
+          transparent
+        />
+      </View>
+
+      <Animated.ScrollView
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+        className="flex-1 px-4"
+        contentContainerStyle={{
+          paddingTop: insets.top + 60,
+          paddingBottom: 20,
+        }}
+      >
         <BannerSection />
         <CategorySection />
         <ProductShowcaseSection />
         {/* <FeaturedProductsSection /> */}
         {/* <FlashSaleSection /> */}
-      </ScrollView>
-    </SafeAreaView>
+      </Animated.ScrollView>
+    </View>
   );
 }
 
 const BannerSection = () => {
-  const router = useRouter();
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
 
   return (
@@ -78,18 +122,23 @@ const BannerSection = () => {
                 <Text className="text-primary font-bold text-sm">Get Now</Text>
               </TouchableOpacity>
             </View>
-            <View className="absolute inset-0 bg-black/40 rounded-xl" />
+            <View
+              className="absolute inset-0 rounded-xl"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+            />
           </View>
         ))}
       </ScrollView>
 
       {/* PaginationDots */}
-      <View className="flex-row justify-center mt-2.5">
+      <View className="flex-row justify-center mt-4">
         {BANNERS.map((_, index) => (
           <View
             key={index}
-            className={`w-2 h-2 rounded-full mx-1 ${
-              index === activeBannerIndex ? " w-5 bg-accent" : "bg-gray-300"
+            className={`h-1.5 rounded-full mx-1 ${
+              index === activeBannerIndex
+                ? "w-6 bg-accent"
+                : "w-1.5 bg-slate-200"
             }`}
           />
         ))}
@@ -102,44 +151,48 @@ const CategorySection = () => {
   const categories = [{ id: "all", name: "All", icon: "grid" }, ...CATEGORIES];
   const [activeCategory, setActiveCategory] = useState("all");
   return (
-    <View className="mt-6">
+    <View className="mt-8">
       <View className="flex flex-col">
-        {/* <Text className="text-lg font-extrabold text-primary mb-3 uppercase leading-none tracking-tighter">
-          Categories
-        </Text> */}
         <HeadingTitle title="Categories" />
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          className="mt-3"
+          className="mt-4"
+          contentContainerStyle={{ paddingRight: 20 }}
         >
           {categories.map((category: any) => (
             <TouchableOpacity
               key={category.id}
-              className={`bg-gray-50 p-3 w-20 rounded-xl mr-2 ${
-                activeCategory === category.id
-                  ? "border-accent/50 border-2"
-                  : "border-transparent border-2"
+              className={`p-3 w-24 h-24 rounded-lg mr-3 items-center justify-center ${
+                activeCategory === category.id ? "bg-accent/80" : "bg-slate-50"
               }`}
               onPress={() => {
                 setActiveCategory(category.id);
               }}
             >
               <View className="items-center justify-center">
-                <Ionicons
-                  name={category.icon}
-                  size={24}
-                  color={
-                    activeCategory === category.id
-                      ? COLORS.accent
-                      : COLORS.primary
-                  }
-                />
+                <View
+                  className="w-12 h-12 rounded-full items-center justify-center mb-2"
+                  style={{
+                    backgroundColor:
+                      activeCategory === category.id
+                        ? "rgba(255, 255, 255, 0.2)"
+                        : "#ffffff",
+                  }}
+                >
+                  <Ionicons
+                    name={category.icon}
+                    size={24}
+                    color={
+                      activeCategory === category.id ? "white" : COLORS.primary
+                    }
+                  />
+                </View>
                 <Text
-                  className={`text-sm font-bold ${
+                  className={`text-[11px] font-bold uppercase tracking-wider ${
                     activeCategory === category.id
-                      ? "text-accent"
-                      : "text-black"
+                      ? "text-white"
+                      : "text-slate-600"
                   }`}
                 >
                   {category.name}
@@ -196,9 +249,9 @@ const ProductShowcaseSection = () => {
 
 const HeadingTitle = ({ title }: { title: string }) => {
   return (
-    <View className="flex flex-row items-center justify-start gap-2 rounded-md overflow-hidden">
-      <View className="w-2 h-5 bg-accent"></View>
-      <Text className="text-lg font-extrabold text-primary uppercase leading-none tracking-tighter">
+    <View className="flex flex-row items-center justify-start gap-3 mb-1">
+      <View className="w-1.5 h-6 bg-accent rounded-full" />
+      <Text className="text-xl font-bold text-primary tracking-tight">
         {title}
       </Text>
     </View>
@@ -206,7 +259,6 @@ const HeadingTitle = ({ title }: { title: string }) => {
 };
 
 const ProductCard = ({ product }: { product: Product }) => {
-  const router = useRouter();
   const isSale = product.comparePrice && product.comparePrice > product.price;
 
   return (
@@ -235,8 +287,15 @@ const ProductCard = ({ product }: { product: Product }) => {
         {/* Action Buttons Overlay */}
         <View className="absolute top-3 right-3 gap-2">
           <TouchableOpacity
-            className="bg-white/90 p-2 rounded-full shadow-sm"
-            style={{ backdropFilter: "blur(10px)" }}
+            className="p-2 rounded-full"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.05,
+              shadowRadius: 2,
+              elevation: 2,
+            }}
           >
             <Ionicons name="heart-outline" size={18} color={COLORS.primary} />
           </TouchableOpacity>
@@ -244,16 +303,36 @@ const ProductCard = ({ product }: { product: Product }) => {
 
         {/* Badges */}
         {isSale && (
-          <View className="absolute top-3 left-3 bg-error px-2.5 py-1 rounded-full">
-            <Text className="text-white text-[10px] font-black uppercase">
+          <View
+            className="absolute top-3 left-3 px-3 py-1 rounded-full"
+            style={{
+              backgroundColor: "rgba(239, 68, 68, 0.9)",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.05,
+              shadowRadius: 2,
+              elevation: 2,
+            }}
+          >
+            <Text className="text-white text-[10px] font-black uppercase tracking-wider">
               Sale
             </Text>
           </View>
         )}
 
         {/* Rating Floating Badge */}
-        <View className="absolute bottom-3 left-3 bg-white/90 px-2.5 py-1 rounded-xl flex-row items-center gap-1 shadow-sm">
-          <Ionicons name="star" size={12} color="#FFD700" />
+        <View
+          className="absolute bottom-3 left-3 px-2.5 py-1.5 rounded-xl flex-row items-center gap-1 border border-slate-50"
+          style={{
+            backgroundColor: "rgba(255, 255, 255, 0.95)",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.05,
+            shadowRadius: 2,
+            elevation: 2,
+          }}
+        >
+          <Ionicons name="star" size={12} color="#F59E0B" />
           <Text className="text-primary text-[11px] font-bold">
             {product.ratings.average}
           </Text>
