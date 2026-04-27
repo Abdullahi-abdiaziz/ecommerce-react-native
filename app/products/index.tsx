@@ -188,7 +188,7 @@ export default function ProductsPage() {
         ListHeaderComponent={
           <View className="mb-4 flex-row justify-between items-end">
             <Text className="text-2xl font-black text-primary">
-              All Products
+              {initialCategory ? initialCategory : "All Products"}
             </Text>
             <Text className="text-secondary font-medium">
               {filteredProducts.length} items
