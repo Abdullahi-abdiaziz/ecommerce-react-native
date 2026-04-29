@@ -20,6 +20,7 @@ import { router } from "expo-router";
 import { CATEGORIES, COLORS } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { Product } from "@/constants/types";
+import { useWishlist } from "@/context/WishListContext";
 
 const { width } = Dimensions.get("window");
 
@@ -72,6 +73,7 @@ export default function Home() {
         <BannerSection />
         <CategorySection />
         <ProductShowcaseSection />
+        <NewsletterSection />
         {/* <FeaturedProductsSection /> */}
         {/* <FlashSaleSection /> */}
       </Animated.ScrollView>
@@ -265,6 +267,7 @@ const HeadingTitle = ({ title }: { title: string }) => {
 
 const ProductCard = ({ product }: { product: Product }) => {
   const isSale = product.comparePrice && product.comparePrice > product.price;
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
   return (
     <TouchableOpacity
@@ -301,8 +304,16 @@ const ProductCard = ({ product }: { product: Product }) => {
               shadowRadius: 2,
               elevation: 2,
             }}
+            onPress={(e) => {
+              e.stopPropagation();
+              toggleWishlist(product);
+            }}
           >
-            <Ionicons name="heart-outline" size={18} color={COLORS.primary} />
+            {isInWishlist(product._id) ? (
+              <Ionicons name="heart" size={18} color={COLORS.error} />
+            ) : (
+              <Ionicons name="heart-outline" size={18} color={COLORS.primary} />
+            )}
           </TouchableOpacity>
         </View>
 
@@ -381,5 +392,21 @@ const ProductCard = ({ product }: { product: Product }) => {
         </View>
       </View>
     </TouchableOpacity>
+  );
+};
+
+const NewsletterSection = () => {
+  return (
+    <View className="bg-gray-100 p-6 rounded-2xl mb-20 mt-10 items-center">
+      <Text className="text-primary font-bold text-2xl text-center mb-2">
+        Join our newsletter
+      </Text>
+      <Text className="text-secondary text-center mb-2">
+        Get the latest updates and offers
+      </Text>
+      <TouchableOpacity className="bg-primary w-4/5 py-3 rounded-full items-center justify-center">
+        <Text className="text-white font-bold text-base">Subscribe</Text>
+      </TouchableOpacity>
+    </View>
   );
 };

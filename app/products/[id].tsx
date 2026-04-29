@@ -15,18 +15,20 @@ import { COLORS } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Product } from "@/constants/types";
+import { useWishlist } from "@/context/WishListContext";
 
 const { width } = Dimensions.get("window");
 
 export default function ProductDetails() {
   const { id } = useLocalSearchParams();
   const insets = useSafeAreaInsets();
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [isFavorite, setIsFavorite] = useState(false);
+
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
@@ -72,8 +74,12 @@ export default function ProductDetails() {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
-      
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
+
       {/* Floating Header */}
       <View
         className="absolute top-0 left-0 right-0 z-50 flex-row justify-between items-center px-4"
@@ -87,14 +93,14 @@ export default function ProductDetails() {
           <Ionicons name="chevron-back" size={24} color={COLORS.primary} />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setIsFavorite(!isFavorite)}
+          onPress={() => toggleWishlist(product)}
           className="w-10 h-10 rounded-full items-center justify-center"
           style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
         >
           <Ionicons
-            name={isFavorite ? "heart" : "heart-outline"}
+            name={isInWishlist(product._id) ? "heart" : "heart-outline"}
             size={22}
-            color={isFavorite ? COLORS.error : COLORS.primary}
+            color={isInWishlist(product._id) ? COLORS.error : COLORS.primary}
           />
         </TouchableOpacity>
       </View>
@@ -257,7 +263,12 @@ export default function ProductDetails() {
           </View>
 
           <TouchableOpacity className="flex-1 ml-6 bg-primary h-14 rounded-full flex-row items-center justify-center shadow-md">
-            <Ionicons name="cart-outline" size={22} color="white" className="mr-2" />
+            <Ionicons
+              name="cart-outline"
+              size={22}
+              color="white"
+              className="mr-2"
+            />
             <Text className="text-white font-bold text-lg ml-2">
               Add to Cart
             </Text>
