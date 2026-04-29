@@ -13,9 +13,13 @@ import { useLocalSearchParams, router } from "expo-router";
 import { dummyProducts } from "@/assets/assets";
 import { COLORS } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { Product } from "@/constants/types";
 import { useWishlist } from "@/context/WishListContext";
+import { useCart } from "@/context/CartContext";
 
 const { width } = Dimensions.get("window");
 
@@ -23,6 +27,7 @@ export default function ProductDetails() {
   const { id } = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { addToCart, cart: cartItems } = useCart();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,9 +53,9 @@ export default function ProductDetails() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-white items-center justify-center">
+      <SafeAreaView className="flex-1 bg-white items-center justify-center">
         <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
+      </SafeAreaView>
     );
   }
 

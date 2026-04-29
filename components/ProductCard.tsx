@@ -4,10 +4,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { COLORS } from "@/constants";
 import { Product } from "@/constants/types";
+import { useWishlist } from "@/context/WishListContext";
 
 const { width } = Dimensions.get("window");
 
 export default function ProductCard({ product }: { product: Product }) {
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const isSale = product.comparePrice && product.comparePrice > product.price;
 
   return (
@@ -46,7 +48,15 @@ export default function ProductCard({ product }: { product: Product }) {
               elevation: 2,
             }}
           >
-            <Ionicons name="heart-outline" size={18} color={COLORS.primary} />
+            <Ionicons
+              name={isInWishlist(product._id) ? "heart" : "heart-outline"}
+              size={18}
+              color={isInWishlist(product._id) ? COLORS.error : COLORS.primary}
+              onPress={(e) => {
+                e.stopPropagation();
+                toggleWishlist(product);
+              }}
+            />
           </TouchableOpacity>
         </View>
 
